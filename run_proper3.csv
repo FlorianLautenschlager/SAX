@@ -1,0 +1,12 @@
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousGrammarSampler	InlineSkate/InlineSkate_TRAIN	InlineSkate/InlineSkate_TEST	10	1800	10	200	2	18	1	20	0,001	MINDIST
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousGrammarSampler	InlineSkate/InlineSkate_TRAIN	InlineSkate/InlineSkate_TEST	10	1800	10	200	2	18	1	20	0,001	EXACT
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousGrammarSampler	InlineSkate/InlineSkate_TRAIN	InlineSkate/InlineSkate_TEST	10	1800	10	200	2	18	1	20	0,001	NONE
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousDirectSampler	InlineSkate/InlineSkate_TRAIN	InlineSkate/InlineSkate_TEST	10	1800	10	200	2	18	1	20	0,001	MINDIST
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousDirectSampler	InlineSkate/InlineSkate_TRAIN	InlineSkate/InlineSkate_TEST	10	1800	10	200	2	18	1	20	0,001	EXACT
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousDirectSampler	InlineSkate/InlineSkate_TRAIN	InlineSkate/InlineSkate_TEST	10	1800	10	200	2	18	1	20	0,001	NONE
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousGrammarSampler	MALLAT/MALLAT_TRAIN	MALLAT/MALLAT_TEST	10	1200	10	200	2	16	1	20	0,001	MINDIST
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousGrammarSampler	MALLAT/MALLAT_TRAIN	MALLAT/MALLAT_TEST	10	1200	10	200	2	16	1	20	0,001	EXACT
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousGrammarSampler	MALLAT/MALLAT_TRAIN	MALLAT/MALLAT_TEST	10	1200	10	200	2	16	1	20	0,001	NONE
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousDirectSampler	MALLAT/MALLAT_TRAIN	MALLAT/MALLAT_TEST	10	1200	10	200	2	16	1	20	0,001	MINDIST
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousDirectSampler	MALLAT/MALLAT_TRAIN	MALLAT/MALLAT_TEST	10	1200	10	200	2	16	1	20	0,001	EXACT
+java	-Xmx30G	-cp	sax-vsm-g20.jar	edu.hawaii.jmotif.direct.SAXVSMContinuousDirectSampler	MALLAT/MALLAT_TRAIN	MALLAT/MALLAT_TEST	10	1200	10	200	2	16	1	20	0,001	NONE
