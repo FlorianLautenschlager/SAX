@@ -1,0 +1,704 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="fr">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>package edu.hawaii.jmotif.sax.alphabet;<a name="line.1"></a>
+<span class="sourceLineNo">002</span><a name="line.2"></a>
+<span class="sourceLineNo">003</span>import edu.hawaii.jmotif.sax.SAXException;<a name="line.3"></a>
+<span class="sourceLineNo">004</span><a name="line.4"></a>
+<span class="sourceLineNo">005</span>/**<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * Implements alphabet component for SAX.<a name="line.6"></a>
+<span class="sourceLineNo">007</span> * <a name="line.7"></a>
+<span class="sourceLineNo">008</span> * @author Pavel Senin<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * <a name="line.9"></a>
+<span class="sourceLineNo">010</span> */<a name="line.10"></a>
+<span class="sourceLineNo">011</span>public final class NormalAlphabet extends Alphabet {<a name="line.11"></a>
+<span class="sourceLineNo">012</span><a name="line.12"></a>
+<span class="sourceLineNo">013</span>  /** Maximal possible alphabet size. */<a name="line.13"></a>
+<span class="sourceLineNo">014</span>  private static final int MAX_SIZE = 20;<a name="line.14"></a>
+<span class="sourceLineNo">015</span><a name="line.15"></a>
+<span class="sourceLineNo">016</span>  // cut intervals<a name="line.16"></a>
+<span class="sourceLineNo">017</span>  //<a name="line.17"></a>
+<span class="sourceLineNo">018</span>  private static final double[] case2 = { 0 };<a name="line.18"></a>
+<span class="sourceLineNo">019</span>  private static final double[] case3 = { -0.4307273, 0.4307273 };<a name="line.19"></a>
+<span class="sourceLineNo">020</span>  private static final double[] case4 = { -0.6744898, 0, 0.6744898 };<a name="line.20"></a>
+<span class="sourceLineNo">021</span>  private static final double[] case5 = { -0.841621233572914, -0.2533471031358, 0.2533471031358,<a name="line.21"></a>
+<span class="sourceLineNo">022</span>      0.841621233572914 };<a name="line.22"></a>
+<span class="sourceLineNo">023</span>  private static final double[] case6 = { -0.967421566101701, -0.430727299295457, 0,<a name="line.23"></a>
+<span class="sourceLineNo">024</span>      0.430727299295457, 0.967421566101701 };<a name="line.24"></a>
+<span class="sourceLineNo">025</span>  private static final double[] case7 = { -1.06757052387814, -0.565948821932863,<a name="line.25"></a>
+<span class="sourceLineNo">026</span>      -0.180012369792705, 0.180012369792705, 0.565948821932863, 1.06757052387814 };<a name="line.26"></a>
+<span class="sourceLineNo">027</span>  private static final double[] case8 = { -1.15034938037601, -0.674489750196082,<a name="line.27"></a>
+<span class="sourceLineNo">028</span>      -0.318639363964375, 0, 0.318639363964375, 0.674489750196082, 1.15034938037601 };<a name="line.28"></a>
+<span class="sourceLineNo">029</span>  private static final double[] case9 = { -1.22064034884735, -0.764709673786387,<a name="line.29"></a>
+<span class="sourceLineNo">030</span>      -0.430727299295457, -0.139710298881862, 0.139710298881862, 0.430727299295457,<a name="line.30"></a>
+<span class="sourceLineNo">031</span>      0.764709673786387, 1.22064034884735 };<a name="line.31"></a>
+<span class="sourceLineNo">032</span>  private static final double[] case10 = { -1.2815515655446, -0.841621233572914,<a name="line.32"></a>
+<span class="sourceLineNo">033</span>      -0.524400512708041, -0.2533471031358, 0, 0.2533471031358, 0.524400512708041,<a name="line.33"></a>
+<span class="sourceLineNo">034</span>      0.841621233572914, 1.2815515655446 };<a name="line.34"></a>
+<span class="sourceLineNo">035</span>  private static final double[] case11 = { -1.33517773611894, -0.908457868537385,<a name="line.35"></a>
+<span class="sourceLineNo">036</span>      -0.604585346583237, -0.348755695517045, -0.114185294321428, 0.114185294321428,<a name="line.36"></a>
+<span class="sourceLineNo">037</span>      0.348755695517045, 0.604585346583237, 0.908457868537385, 1.33517773611894 };<a name="line.37"></a>
+<span class="sourceLineNo">038</span>  private static final double[] case12 = { -1.38299412710064, -0.967421566101701,<a name="line.38"></a>
+<span class="sourceLineNo">039</span>      -0.674489750196082, -0.430727299295457, -0.210428394247925, 0, 0.210428394247925,<a name="line.39"></a>
+<span class="sourceLineNo">040</span>      0.430727299295457, 0.674489750196082, 0.967421566101701, 1.38299412710064 };<a name="line.40"></a>
+<span class="sourceLineNo">041</span>  private static final double[] case13 = { -1.42607687227285, -1.0200762327862, -0.736315917376129,<a name="line.41"></a>
+<span class="sourceLineNo">042</span>      -0.502402223373355, -0.293381232121193, -0.0965586152896391, 0.0965586152896394,<a name="line.42"></a>
+<span class="sourceLineNo">043</span>      0.293381232121194, 0.502402223373355, 0.73631591737613, 1.0200762327862, 1.42607687227285 };<a name="line.43"></a>
+<span class="sourceLineNo">044</span>  private static final double[] case14 = { -1.46523379268552, -1.06757052387814,<a name="line.44"></a>
+<span class="sourceLineNo">045</span>      -0.791638607743375, -0.565948821932863, -0.36610635680057, -0.180012369792705, 0,<a name="line.45"></a>
+<span class="sourceLineNo">046</span>      0.180012369792705, 0.36610635680057, 0.565948821932863, 0.791638607743375, 1.06757052387814,<a name="line.46"></a>
+<span class="sourceLineNo">047</span>      1.46523379268552 };<a name="line.47"></a>
+<span class="sourceLineNo">048</span>  private static final double[] case15 = { -1.50108594604402, -1.11077161663679,<a name="line.48"></a>
+<span class="sourceLineNo">049</span>      -0.841621233572914, -0.622925723210088, -0.430727299295457, -0.2533471031358,<a name="line.49"></a>
+<span class="sourceLineNo">050</span>      -0.0836517339071291, 0.0836517339071291, 0.2533471031358, 0.430727299295457,<a name="line.50"></a>
+<span class="sourceLineNo">051</span>      0.622925723210088, 0.841621233572914, 1.11077161663679, 1.50108594604402 };<a name="line.51"></a>
+<span class="sourceLineNo">052</span>  private static final double[] case16 = { -1.53412054435255, -1.15034938037601,<a name="line.52"></a>
+<span class="sourceLineNo">053</span>      -0.887146559018876, -0.674489750196082, -0.488776411114669, -0.318639363964375,<a name="line.53"></a>
+<span class="sourceLineNo">054</span>      -0.157310684610171, 0, 0.157310684610171, 0.318639363964375, 0.488776411114669,<a name="line.54"></a>
+<span class="sourceLineNo">055</span>      0.674489750196082, 0.887146559018876, 1.15034938037601, 1.53412054435255 };<a name="line.55"></a>
+<span class="sourceLineNo">056</span>  private static final double[] case17 = { -1.5647264713618, -1.18683143275582, -0.928899491647271,<a name="line.56"></a>
+<span class="sourceLineNo">057</span>      -0.721522283982343, -0.541395085129088, -0.377391943828554, -0.223007830940367,<a name="line.57"></a>
+<span class="sourceLineNo">058</span>      -0.0737912738082727, 0.0737912738082727, 0.223007830940367, 0.377391943828554,<a name="line.58"></a>
+<span class="sourceLineNo">059</span>      0.541395085129088, 0.721522283982343, 0.928899491647271, 1.18683143275582, 1.5647264713618 };<a name="line.59"></a>
+<span class="sourceLineNo">060</span>  private static final double[] case18 = { -1.59321881802305, -1.22064034884735,<a name="line.60"></a>
+<span class="sourceLineNo">061</span>      -0.967421566101701, -0.764709673786387, -0.589455797849779, -0.430727299295457,<a name="line.61"></a>
+<span class="sourceLineNo">062</span>      -0.282216147062508, -0.139710298881862, 0, 0.139710298881862, 0.282216147062508,<a name="line.62"></a>
+<span class="sourceLineNo">063</span>      0.430727299295457, 0.589455797849779, 0.764709673786387, 0.967421566101701, 1.22064034884735,<a name="line.63"></a>
+<span class="sourceLineNo">064</span>      1.59321881802305 };<a name="line.64"></a>
+<span class="sourceLineNo">065</span>  private static final double[] case19 = { -1.61985625863827, -1.25211952026522, -1.00314796766253,<a name="line.65"></a>
+<span class="sourceLineNo">066</span>      -0.8045963803603, -0.633640000779701, -0.47950565333095, -0.336038140371823,<a name="line.66"></a>
+<span class="sourceLineNo">067</span>      -0.199201324789267, -0.0660118123758407, 0.0660118123758406, 0.199201324789267,<a name="line.67"></a>
+<span class="sourceLineNo">068</span>      0.336038140371823, 0.47950565333095, 0.633640000779701, 0.8045963803603, 1.00314796766253,<a name="line.68"></a>
+<span class="sourceLineNo">069</span>      1.25211952026522, 1.61985625863827 };<a name="line.69"></a>
+<span class="sourceLineNo">070</span>  private static final double[] case20 = { -1.64485362695147, -1.2815515655446, -1.03643338949379,<a name="line.70"></a>
+<span class="sourceLineNo">071</span>      -0.841621233572914, -0.674489750196082, -0.524400512708041, -0.385320466407568,<a name="line.71"></a>
+<span class="sourceLineNo">072</span>      -0.2533471031358, -0.125661346855074, 0, 0.125661346855074, 0.2533471031358,<a name="line.72"></a>
+<span class="sourceLineNo">073</span>      0.385320466407568, 0.524400512708041, 0.674489750196082, 0.841621233572914, 1.03643338949379,<a name="line.73"></a>
+<span class="sourceLineNo">074</span>      1.2815515655446, 1.64485362695147 };<a name="line.74"></a>
+<span class="sourceLineNo">075</span><a name="line.75"></a>
+<span class="sourceLineNo">076</span>  private static final double[][] distance_case2 = { { 0.000000, 0.000000 }, { 0.000000, 0.000000 } };<a name="line.76"></a>
+<span class="sourceLineNo">077</span><a name="line.77"></a>
+<span class="sourceLineNo">078</span>  private static final double[][] distance_case3 = { { 0.000000, 0.000000, 0.861455 },<a name="line.78"></a>
+<span class="sourceLineNo">079</span>      { 0.000000, 0.000000, 0.000000 }, { 0.861455, 0.000000, 0.000000 } };<a name="line.79"></a>
+<span class="sourceLineNo">080</span><a name="line.80"></a>
+<span class="sourceLineNo">081</span>  private static final double[][] distance_case4 =<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>  { { 0.000000, 0.000000, 0.674490, 1.348980 }, { 0.000000, 0.000000, 0.000000, 0.674490 },<a name="line.83"></a>
+<span class="sourceLineNo">084</span>      { 0.674490, 0.000000, 0.000000, 0.000000 }, { 1.348980, 0.674490, 0.000000, 0.000000 } };<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>  private static final double[][] distance_case5 = {<a name="line.86"></a>
+<span class="sourceLineNo">087</span>      { 0.000000, 0.000000, 0.588274, 1.094968, 1.683242 },<a name="line.87"></a>
+<span class="sourceLineNo">088</span>      { 0.000000, 0.000000, 0.000000, 0.506694, 1.094968 },<a name="line.88"></a>
+<span class="sourceLineNo">089</span>      { 0.588274, 0.000000, 0.000000, 0.000000, 0.588274 },<a name="line.89"></a>
+<span class="sourceLineNo">090</span>      { 1.094968, 0.506694, 0.000000, 0.000000, 0.000000 },<a name="line.90"></a>
+<span class="sourceLineNo">091</span>      { 1.683242, 1.094968, 0.588274, 0.000000, 0.000000 } };<a name="line.91"></a>
+<span class="sourceLineNo">092</span><a name="line.92"></a>
+<span class="sourceLineNo">093</span>  private static final double[][] distance_case6 = {<a name="line.93"></a>
+<span class="sourceLineNo">094</span>      { 0.000000, 0.000000, 0.536694, 0.967422, 1.398149, 1.934843 },<a name="line.94"></a>
+<span class="sourceLineNo">095</span>      { 0.000000, 0.000000, 0.000000, 0.430727, 0.861455, 1.398149 },<a name="line.95"></a>
+<span class="sourceLineNo">096</span>      { 0.536694, 0.000000, 0.000000, 0.000000, 0.430727, 0.967422 },<a name="line.96"></a>
+<span class="sourceLineNo">097</span>      { 0.967422, 0.430727, 0.000000, 0.000000, 0.000000, 0.536694 },<a name="line.97"></a>
+<span class="sourceLineNo">098</span>      { 1.398149, 0.861455, 0.430727, 0.000000, 0.000000, 0.000000 },<a name="line.98"></a>
+<span class="sourceLineNo">099</span>      { 1.934843, 1.398149, 0.967422, 0.536694, 0.000000, 0.000000 } };<a name="line.99"></a>
+<span class="sourceLineNo">100</span><a name="line.100"></a>
+<span class="sourceLineNo">101</span>  private static final double[][] distance_case7 = {<a name="line.101"></a>
+<span class="sourceLineNo">102</span>      { 0.000000, 0.000000, 0.501622, 0.887558, 1.247583, 1.633519, 2.135141 },<a name="line.102"></a>
+<span class="sourceLineNo">103</span>      { 0.000000, 0.000000, 0.000000, 0.385936, 0.745961, 1.131898, 1.633519 },<a name="line.103"></a>
+<span class="sourceLineNo">104</span>      { 0.501622, 0.000000, 0.000000, 0.000000, 0.360025, 0.745961, 1.247583 },<a name="line.104"></a>
+<span class="sourceLineNo">105</span>      { 0.887558, 0.385936, 0.000000, 0.000000, 0.000000, 0.385936, 0.887558 },<a name="line.105"></a>
+<span class="sourceLineNo">106</span>      { 1.247583, 0.745961, 0.360025, 0.000000, 0.000000, 0.000000, 0.501622 },<a name="line.106"></a>
+<span class="sourceLineNo">107</span>      { 1.633519, 1.131898, 0.745961, 0.385936, 0.000000, 0.000000, 0.000000 },<a name="line.107"></a>
+<span class="sourceLineNo">108</span>      { 2.135141, 1.633519, 1.247583, 0.887558, 0.501622, 0.000000, 0.000000 } };<a name="line.108"></a>
+<span class="sourceLineNo">109</span><a name="line.109"></a>
+<span class="sourceLineNo">110</span>  private static final double[][] distance_case8 = {<a name="line.110"></a>
+<span class="sourceLineNo">111</span>      { 0.000000, 0.000000, 0.475860, 0.831710, 1.150349, 1.468989, 1.824839, 2.300699 },<a name="line.111"></a>
+<span class="sourceLineNo">112</span>      { 0.000000, 0.000000, 0.000000, 0.355850, 0.674490, 0.993129, 1.348980, 1.824839 },<a name="line.112"></a>
+<span class="sourceLineNo">113</span>      { 0.475860, 0.000000, 0.000000, 0.000000, 0.318639, 0.637279, 0.993129, 1.468989 },<a name="line.113"></a>
+<span class="sourceLineNo">114</span>      { 0.831710, 0.355850, 0.000000, 0.000000, 0.000000, 0.318639, 0.674490, 1.150349 },<a name="line.114"></a>
+<span class="sourceLineNo">115</span>      { 1.150349, 0.674490, 0.318639, 0.000000, 0.000000, 0.000000, 0.355850, 0.831710 },<a name="line.115"></a>
+<span class="sourceLineNo">116</span>      { 1.468989, 0.993129, 0.637279, 0.318639, 0.000000, 0.000000, 0.000000, 0.475860 },<a name="line.116"></a>
+<span class="sourceLineNo">117</span>      { 1.824839, 1.348980, 0.993129, 0.674490, 0.355850, 0.000000, 0.000000, 0.000000 },<a name="line.117"></a>
+<span class="sourceLineNo">118</span>      { 2.300699, 1.824839, 1.468989, 1.150349, 0.831710, 0.475860, 0.000000, 0.000000 } };<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>  private static final double[][] distance_case9 = {<a name="line.120"></a>
+<span class="sourceLineNo">121</span>      { 0.000000, 0.000000, 0.455931, 0.789913, 1.080930, 1.360351, 1.651368, 1.985350, 2.441281 },<a name="line.121"></a>
+<span class="sourceLineNo">122</span>      { 0.000000, 0.000000, 0.000000, 0.333982, 0.624999, 0.904420, 1.195437, 1.529419, 1.985350 },<a name="line.122"></a>
+<span class="sourceLineNo">123</span>      { 0.455931, 0.000000, 0.000000, 0.000000, 0.291017, 0.570438, 0.861455, 1.195437, 1.651368 },<a name="line.123"></a>
+<span class="sourceLineNo">124</span>      { 0.789913, 0.333982, 0.000000, 0.000000, 0.000000, 0.279421, 0.570438, 0.904420, 1.360351 },<a name="line.124"></a>
+<span class="sourceLineNo">125</span>      { 1.080930, 0.624999, 0.291017, 0.000000, 0.000000, 0.000000, 0.291017, 0.624999, 1.080930 },<a name="line.125"></a>
+<span class="sourceLineNo">126</span>      { 1.360351, 0.904420, 0.570438, 0.279421, 0.000000, 0.000000, 0.000000, 0.333982, 0.789913 },<a name="line.126"></a>
+<span class="sourceLineNo">127</span>      { 1.651368, 1.195437, 0.861455, 0.570438, 0.291017, 0.000000, 0.000000, 0.000000, 0.455931 },<a name="line.127"></a>
+<span class="sourceLineNo">128</span>      { 1.985350, 1.529419, 1.195437, 0.904420, 0.624999, 0.333982, 0.000000, 0.000000, 0.000000 },<a name="line.128"></a>
+<span class="sourceLineNo">129</span>      { 2.441281, 1.985350, 1.651368, 1.360351, 1.080930, 0.789913, 0.455931, 0.000000, 0.000000 } };<a name="line.129"></a>
+<span class="sourceLineNo">130</span><a name="line.130"></a>
+<span class="sourceLineNo">131</span>  private static final double[][] distance_case10 = {<a name="line.131"></a>
+<span class="sourceLineNo">132</span>      { 0.000000, 0.000000, 0.439930, 0.757151, 1.028204, 1.281552, 1.534899, 1.805952, 2.123173,<a name="line.132"></a>
+<span class="sourceLineNo">133</span>          2.563103 },<a name="line.133"></a>
+<span class="sourceLineNo">134</span>      { 0.000000, 0.000000, 0.000000, 0.317221, 0.588274, 0.841621, 1.094968, 1.366022, 1.683242,<a name="line.134"></a>
+<span class="sourceLineNo">135</span>          2.123173 },<a name="line.135"></a>
+<span class="sourceLineNo">136</span>      { 0.439930, 0.000000, 0.000000, 0.000000, 0.271053, 0.524401, 0.777748, 1.048801, 1.366022,<a name="line.136"></a>
+<span class="sourceLineNo">137</span>          1.805952 },<a name="line.137"></a>
+<span class="sourceLineNo">138</span>      { 0.757151, 0.317221, 0.000000, 0.000000, 0.000000, 0.253347, 0.506694, 0.777748, 1.094968,<a name="line.138"></a>
+<span class="sourceLineNo">139</span>          1.534899 },<a name="line.139"></a>
+<span class="sourceLineNo">140</span>      { 1.028204, 0.588274, 0.271053, 0.000000, 0.000000, 0.000000, 0.253347, 0.524401, 0.841621,<a name="line.140"></a>
+<span class="sourceLineNo">141</span>          1.281552 },<a name="line.141"></a>
+<span class="sourceLineNo">142</span>      { 1.281552, 0.841621, 0.524401, 0.253347, 0.000000, 0.000000, 0.000000, 0.271053, 0.588274,<a name="line.142"></a>
+<span class="sourceLineNo">143</span>          1.028204 },<a name="line.143"></a>
+<span class="sourceLineNo">144</span>      { 1.534899, 1.094968, 0.777748, 0.506694, 0.253347, 0.000000, 0.000000, 0.000000, 0.317221,<a name="line.144"></a>
+<span class="sourceLineNo">145</span>          0.757151 },<a name="line.145"></a>
+<span class="sourceLineNo">146</span>      { 1.805952, 1.366022, 1.048801, 0.777748, 0.524401, 0.271053, 0.000000, 0.000000, 0.000000,<a name="line.146"></a>
+<span class="sourceLineNo">147</span>          0.439930 },<a name="line.147"></a>
+<span class="sourceLineNo">148</span>      { 2.123173, 1.683242, 1.366022, 1.094968, 0.841621, 0.588274, 0.317221, 0.000000, 0.000000,<a name="line.148"></a>
+<span class="sourceLineNo">149</span>          0.000000 },<a name="line.149"></a>
+<span class="sourceLineNo">150</span>      { 2.563103, 2.123173, 1.805952, 1.534899, 1.281552, 1.028204, 0.757151, 0.439930, 0.000000,<a name="line.150"></a>
+<span class="sourceLineNo">151</span>          0.000000 } };<a name="line.151"></a>
+<span class="sourceLineNo">152</span><a name="line.152"></a>
+<span class="sourceLineNo">153</span>  private static final double[][] distance_case11 = {<a name="line.153"></a>
+<span class="sourceLineNo">154</span>      { 0.000000, 0.000000, 0.426720, 0.730592, 0.986422, 1.220992, 1.449363, 1.683933, 1.939763,<a name="line.154"></a>
+<span class="sourceLineNo">155</span>          2.243636, 2.670355 },<a name="line.155"></a>
+<span class="sourceLineNo">156</span>      { 0.000000, 0.000000, 0.000000, 0.303873, 0.559702, 0.794273, 1.022643, 1.257214, 1.513043,<a name="line.156"></a>
+<span class="sourceLineNo">157</span>          1.816916, 2.243636 },<a name="line.157"></a>
+<span class="sourceLineNo">158</span>      { 0.426720, 0.000000, 0.000000, 0.000000, 0.255830, 0.490400, 0.718771, 0.953341, 1.209171,<a name="line.158"></a>
+<span class="sourceLineNo">159</span>          1.513043, 1.939763 },<a name="line.159"></a>
+<span class="sourceLineNo">160</span>      { 0.730592, 0.303873, 0.000000, 0.000000, 0.000000, 0.234570, 0.462941, 0.697511, 0.953341,<a name="line.160"></a>
+<span class="sourceLineNo">161</span>          1.257214, 1.683933 },<a name="line.161"></a>
+<span class="sourceLineNo">162</span>      { 0.986422, 0.559702, 0.255830, 0.000000, 0.000000, 0.000000, 0.228371, 0.462941, 0.718771,<a name="line.162"></a>
+<span class="sourceLineNo">163</span>          1.022643, 1.449363 },<a name="line.163"></a>
+<span class="sourceLineNo">164</span>      { 1.220992, 0.794273, 0.490400, 0.234570, 0.000000, 0.000000, 0.000000, 0.234570, 0.490400,<a name="line.164"></a>
+<span class="sourceLineNo">165</span>          0.794273, 1.220992 },<a name="line.165"></a>
+<span class="sourceLineNo">166</span>      { 1.449363, 1.022643, 0.718771, 0.462941, 0.228371, 0.000000, 0.000000, 0.000000, 0.255830,<a name="line.166"></a>
+<span class="sourceLineNo">167</span>          0.559702, 0.986422 },<a name="line.167"></a>
+<span class="sourceLineNo">168</span>      { 1.683933, 1.257214, 0.953341, 0.697511, 0.462941, 0.234570, 0.000000, 0.000000, 0.000000,<a name="line.168"></a>
+<span class="sourceLineNo">169</span>          0.303873, 0.730592 },<a name="line.169"></a>
+<span class="sourceLineNo">170</span>      { 1.939763, 1.513043, 1.209171, 0.953341, 0.718771, 0.490400, 0.255830, 0.000000, 0.000000,<a name="line.170"></a>
+<span class="sourceLineNo">171</span>          0.000000, 0.426720 },<a name="line.171"></a>
+<span class="sourceLineNo">172</span>      { 2.243636, 1.816916, 1.513043, 1.257214, 1.022643, 0.794273, 0.559702, 0.303873, 0.000000,<a name="line.172"></a>
+<span class="sourceLineNo">173</span>          0.000000, 0.000000 },<a name="line.173"></a>
+<span class="sourceLineNo">174</span>      { 2.670355, 2.243636, 1.939763, 1.683933, 1.449363, 1.220992, 0.986422, 0.730592, 0.426720,<a name="line.174"></a>
+<span class="sourceLineNo">175</span>          0.000000, 0.000000 } };<a name="line.175"></a>
+<span class="sourceLineNo">176</span><a name="line.176"></a>
+<span class="sourceLineNo">177</span>  private static final double[][] distance_case12 = {<a name="line.177"></a>
+<span class="sourceLineNo">178</span>      { 0.000000, 0.000000, 0.415573, 0.708504, 0.952267, 1.172566, 1.382994, 1.593423, 1.813721,<a name="line.178"></a>
+<span class="sourceLineNo">179</span>          2.057484, 2.350416, 2.765988 },<a name="line.179"></a>
+<span class="sourceLineNo">180</span>      { 0.000000, 0.000000, 0.000000, 0.292932, 0.536694, 0.756993, 0.967422, 1.177850, 1.398149,<a name="line.180"></a>
+<span class="sourceLineNo">181</span>          1.641911, 1.934843, 2.350416 },<a name="line.181"></a>
+<span class="sourceLineNo">182</span>      { 0.415573, 0.000000, 0.000000, 0.000000, 0.243762, 0.464061, 0.674490, 0.884918, 1.105217,<a name="line.182"></a>
+<span class="sourceLineNo">183</span>          1.348980, 1.641911, 2.057484 },<a name="line.183"></a>
+<span class="sourceLineNo">184</span>      { 0.708504, 0.292932, 0.000000, 0.000000, 0.000000, 0.220299, 0.430727, 0.641156, 0.861455,<a name="line.184"></a>
+<span class="sourceLineNo">185</span>          1.105217, 1.398149, 1.813721 },<a name="line.185"></a>
+<span class="sourceLineNo">186</span>      { 0.952267, 0.536694, 0.243762, 0.000000, 0.000000, 0.000000, 0.210428, 0.420857, 0.641156,<a name="line.186"></a>
+<span class="sourceLineNo">187</span>          0.884918, 1.177850, 1.593423 },<a name="line.187"></a>
+<span class="sourceLineNo">188</span>      { 1.172566, 0.756993, 0.464061, 0.220299, 0.000000, 0.000000, 0.000000, 0.210428, 0.430727,<a name="line.188"></a>
+<span class="sourceLineNo">189</span>          0.674490, 0.967422, 1.382994 },<a name="line.189"></a>
+<span class="sourceLineNo">190</span>      { 1.382994, 0.967422, 0.674490, 0.430727, 0.210428, 0.000000, 0.000000, 0.000000, 0.220299,<a name="line.190"></a>
+<span class="sourceLineNo">191</span>          0.464061, 0.756993, 1.172566 },<a name="line.191"></a>
+<span class="sourceLineNo">192</span>      { 1.593423, 1.177850, 0.884918, 0.641156, 0.420857, 0.210428, 0.000000, 0.000000, 0.000000,<a name="line.192"></a>
+<span class="sourceLineNo">193</span>          0.243762, 0.536694, 0.952267 },<a name="line.193"></a>
+<span class="sourceLineNo">194</span>      { 1.813721, 1.398149, 1.105217, 0.861455, 0.641156, 0.430727, 0.220299, 0.000000, 0.000000,<a name="line.194"></a>
+<span class="sourceLineNo">195</span>          0.000000, 0.292932, 0.708504 },<a name="line.195"></a>
+<span class="sourceLineNo">196</span>      { 2.057484, 1.641911, 1.348980, 1.105217, 0.884918, 0.674490, 0.464061, 0.243762, 0.000000,<a name="line.196"></a>
+<span class="sourceLineNo">197</span>          0.000000, 0.000000, 0.415573 },<a name="line.197"></a>
+<span class="sourceLineNo">198</span>      { 2.350416, 1.934843, 1.641911, 1.398149, 1.177850, 0.967422, 0.756993, 0.536694, 0.292932,<a name="line.198"></a>
+<span class="sourceLineNo">199</span>          0.000000, 0.000000, 0.000000 },<a name="line.199"></a>
+<span class="sourceLineNo">200</span>      { 2.765988, 2.350416, 2.057484, 1.813721, 1.593423, 1.382994, 1.172566, 0.952267, 0.708504,<a name="line.200"></a>
+<span class="sourceLineNo">201</span>          0.415573, 0.000000, 0.000000 } };<a name="line.201"></a>
+<span class="sourceLineNo">202</span><a name="line.202"></a>
+<span class="sourceLineNo">203</span>  private static final double[][] distance_case13 = {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>      { 0.000000, 0.000000, 0.406001, 0.689761, 0.923675, 1.132696, 1.329518, 1.522635, 1.719458,<a name="line.204"></a>
+<span class="sourceLineNo">205</span>          1.928479, 2.162393, 2.446153, 2.852154 },<a name="line.205"></a>
+<span class="sourceLineNo">206</span>      { 0.000000, 0.000000, 0.000000, 0.283760, 0.517674, 0.726695, 0.923518, 1.116635, 1.313457,<a name="line.206"></a>
+<span class="sourceLineNo">207</span>          1.522478, 1.756392, 2.040152, 2.446153 },<a name="line.207"></a>
+<span class="sourceLineNo">208</span>      { 0.406001, 0.000000, 0.000000, 0.000000, 0.233914, 0.442935, 0.639757, 0.832875, 1.029697,<a name="line.208"></a>
+<span class="sourceLineNo">209</span>          1.238718, 1.472632, 1.756392, 2.162393 },<a name="line.209"></a>
+<span class="sourceLineNo">210</span>      { 0.689761, 0.283760, 0.000000, 0.000000, 0.000000, 0.209021, 0.405844, 0.598961, 0.795783,<a name="line.210"></a>
+<span class="sourceLineNo">211</span>          1.004804, 1.238718, 1.522478, 1.928479 },<a name="line.211"></a>
+<span class="sourceLineNo">212</span>      { 0.923675, 0.517674, 0.233914, 0.000000, 0.000000, 0.000000, 0.196823, 0.389940, 0.586762,<a name="line.212"></a>
+<span class="sourceLineNo">213</span>          0.795783, 1.029697, 1.313457, 1.719458 },<a name="line.213"></a>
+<span class="sourceLineNo">214</span>      { 1.132696, 0.726695, 0.442935, 0.209021, 0.000000, 0.000000, 0.000000, 0.193117, 0.389940,<a name="line.214"></a>
+<span class="sourceLineNo">215</span>          0.598961, 0.832875, 1.116635, 1.522635 },<a name="line.215"></a>
+<span class="sourceLineNo">216</span>      { 1.329518, 0.923518, 0.639757, 0.405844, 0.196823, 0.000000, 0.000000, 0.000000, 0.196823,<a name="line.216"></a>
+<span class="sourceLineNo">217</span>          0.405844, 0.639757, 0.923518, 1.329518 },<a name="line.217"></a>
+<span class="sourceLineNo">218</span>      { 1.522635, 1.116635, 0.832875, 0.598961, 0.389940, 0.193117, 0.000000, 0.000000, 0.000000,<a name="line.218"></a>
+<span class="sourceLineNo">219</span>          0.209021, 0.442935, 0.726695, 1.132696 },<a name="line.219"></a>
+<span class="sourceLineNo">220</span>      { 1.719458, 1.313457, 1.029697, 0.795783, 0.586762, 0.389940, 0.196823, 0.000000, 0.000000,<a name="line.220"></a>
+<span class="sourceLineNo">221</span>          0.000000, 0.233914, 0.517674, 0.923675 },<a name="line.221"></a>
+<span class="sourceLineNo">222</span>      { 1.928479, 1.522478, 1.238718, 1.004804, 0.795783, 0.598961, 0.405844, 0.209021, 0.000000,<a name="line.222"></a>
+<span class="sourceLineNo">223</span>          0.000000, 0.000000, 0.283760, 0.689761 },<a name="line.223"></a>
+<span class="sourceLineNo">224</span>      { 2.162393, 1.756392, 1.472632, 1.238718, 1.029697, 0.832875, 0.639757, 0.442935, 0.233914,<a name="line.224"></a>
+<span class="sourceLineNo">225</span>          0.000000, 0.000000, 0.000000, 0.406001 },<a name="line.225"></a>
+<span class="sourceLineNo">226</span>      { 2.446153, 2.040152, 1.756392, 1.522478, 1.313457, 1.116635, 0.923518, 0.726695, 0.517674,<a name="line.226"></a>
+<span class="sourceLineNo">227</span>          0.283760, 0.000000, 0.000000, 0.000000 },<a name="line.227"></a>
+<span class="sourceLineNo">228</span>      { 2.852154, 2.446153, 2.162393, 1.928479, 1.719458, 1.522635, 1.329518, 1.132696, 0.923675,<a name="line.228"></a>
+<span class="sourceLineNo">229</span>          0.689761, 0.406001, 0.000000, 0.000000 } };<a name="line.229"></a>
+<span class="sourceLineNo">230</span><a name="line.230"></a>
+<span class="sourceLineNo">231</span>  private static final double[][] distance_case14 = {<a name="line.231"></a>
+<span class="sourceLineNo">232</span>      { 0.000000, 0.000000, 0.397663, 0.673595, 0.899285, 1.099127, 1.285221, 1.465234, 1.645246,<a name="line.232"></a>
+<span class="sourceLineNo">233</span>          1.831340, 2.031183, 2.256872, 2.532804, 2.930468 },<a name="line.233"></a>
+<span class="sourceLineNo">234</span>      { 0.000000, 0.000000, 0.000000, 0.275932, 0.501622, 0.701464, 0.887558, 1.067571, 1.247583,<a name="line.234"></a>
+<span class="sourceLineNo">235</span>          1.433677, 1.633519, 1.859209, 2.135141, 2.532804 },<a name="line.235"></a>
+<span class="sourceLineNo">236</span>      { 0.397663, 0.000000, 0.000000, 0.000000, 0.225690, 0.425532, 0.611626, 0.791639, 0.971651,<a name="line.236"></a>
+<span class="sourceLineNo">237</span>          1.157745, 1.357587, 1.583277, 1.859209, 2.256872 },<a name="line.237"></a>
+<span class="sourceLineNo">238</span>      { 0.673595, 0.275932, 0.000000, 0.000000, 0.000000, 0.199842, 0.385936, 0.565949, 0.745961,<a name="line.238"></a>
+<span class="sourceLineNo">239</span>          0.932055, 1.131898, 1.357587, 1.633519, 2.031183 },<a name="line.239"></a>
+<span class="sourceLineNo">240</span>      { 0.899285, 0.501622, 0.225690, 0.000000, 0.000000, 0.000000, 0.186094, 0.366106, 0.546119,<a name="line.240"></a>
+<span class="sourceLineNo">241</span>          0.732213, 0.932055, 1.157745, 1.433677, 1.831340 },<a name="line.241"></a>
+<span class="sourceLineNo">242</span>      { 1.099127, 0.701464, 0.425532, 0.199842, 0.000000, 0.000000, 0.000000, 0.180012, 0.360025,<a name="line.242"></a>
+<span class="sourceLineNo">243</span>          0.546119, 0.745961, 0.971651, 1.247583, 1.645246 },<a name="line.243"></a>
+<span class="sourceLineNo">244</span>      { 1.285221, 0.887558, 0.611626, 0.385936, 0.186094, 0.000000, 0.000000, 0.000000, 0.180012,<a name="line.244"></a>
+<span class="sourceLineNo">245</span>          0.366106, 0.565949, 0.791639, 1.067571, 1.465234 },<a name="line.245"></a>
+<span class="sourceLineNo">246</span>      { 1.465234, 1.067571, 0.791639, 0.565949, 0.366106, 0.180012, 0.000000, 0.000000, 0.000000,<a name="line.246"></a>
+<span class="sourceLineNo">247</span>          0.186094, 0.385936, 0.611626, 0.887558, 1.285221 },<a name="line.247"></a>
+<span class="sourceLineNo">248</span>      { 1.645246, 1.247583, 0.971651, 0.745961, 0.546119, 0.360025, 0.180012, 0.000000, 0.000000,<a name="line.248"></a>
+<span class="sourceLineNo">249</span>          0.000000, 0.199842, 0.425532, 0.701464, 1.099127 },<a name="line.249"></a>
+<span class="sourceLineNo">250</span>      { 1.831340, 1.433677, 1.157745, 0.932055, 0.732213, 0.546119, 0.366106, 0.186094, 0.000000,<a name="line.250"></a>
+<span class="sourceLineNo">251</span>          0.000000, 0.000000, 0.225690, 0.501622, 0.899285 },<a name="line.251"></a>
+<span class="sourceLineNo">252</span>      { 2.031183, 1.633519, 1.357587, 1.131898, 0.932055, 0.745961, 0.565949, 0.385936, 0.199842,<a name="line.252"></a>
+<span class="sourceLineNo">253</span>          0.000000, 0.000000, 0.000000, 0.275932, 0.673595 },<a name="line.253"></a>
+<span class="sourceLineNo">254</span>      { 2.256872, 1.859209, 1.583277, 1.357587, 1.157745, 0.971651, 0.791639, 0.611626, 0.425532,<a name="line.254"></a>
+<span class="sourceLineNo">255</span>          0.225690, 0.000000, 0.000000, 0.000000, 0.397663 },<a name="line.255"></a>
+<span class="sourceLineNo">256</span>      { 2.532804, 2.135141, 1.859209, 1.633519, 1.433677, 1.247583, 1.067571, 0.887558, 0.701464,<a name="line.256"></a>
+<span class="sourceLineNo">257</span>          0.501622, 0.275932, 0.000000, 0.000000, 0.000000 },<a name="line.257"></a>
+<span class="sourceLineNo">258</span>      { 2.930468, 2.532804, 2.256872, 2.031183, 1.831340, 1.645246, 1.465234, 1.285221, 1.099127,<a name="line.258"></a>
+<span class="sourceLineNo">259</span>          0.899285, 0.673595, 0.397663, 0.000000, 0.000000 } };<a name="line.259"></a>
+<span class="sourceLineNo">260</span><a name="line.260"></a>
+<span class="sourceLineNo">261</span>  private static final double[][] distance_case15 = {<a name="line.261"></a>
+<span class="sourceLineNo">262</span>      { 0.000000, 0.000000, 0.390314, 0.659465, 0.878160, 1.070359, 1.247739, 1.417434, 1.584738,<a name="line.262"></a>
+<span class="sourceLineNo">263</span>          1.754433, 1.931813, 2.124012, 2.342707, 2.611858, 3.002172 },<a name="line.263"></a>
+<span class="sourceLineNo">264</span>      { 0.000000, 0.000000, 0.000000, 0.269150, 0.487846, 0.680044, 0.857425, 1.027120, 1.194423,<a name="line.264"></a>
+<span class="sourceLineNo">265</span>          1.364119, 1.541499, 1.733697, 1.952393, 2.221543, 2.611858 },<a name="line.265"></a>
+<span class="sourceLineNo">266</span>      { 0.390314, 0.000000, 0.000000, 0.000000, 0.218696, 0.410894, 0.588274, 0.757969, 0.925273,<a name="line.266"></a>
+<span class="sourceLineNo">267</span>          1.094968, 1.272349, 1.464547, 1.683242, 1.952393, 2.342707 },<a name="line.267"></a>
+<span class="sourceLineNo">268</span>      { 0.659465, 0.269150, 0.000000, 0.000000, 0.000000, 0.192198, 0.369579, 0.539274, 0.706577,<a name="line.268"></a>
+<span class="sourceLineNo">269</span>          0.876273, 1.053653, 1.245851, 1.464547, 1.733697, 2.124012 },<a name="line.269"></a>
+<span class="sourceLineNo">270</span>      { 0.878160, 0.487846, 0.218696, 0.000000, 0.000000, 0.000000, 0.177380, 0.347076, 0.514379,<a name="line.270"></a>
+<span class="sourceLineNo">271</span>          0.684074, 0.861455, 1.053653, 1.272349, 1.541499, 1.931813 },<a name="line.271"></a>
+<span class="sourceLineNo">272</span>      { 1.070359, 0.680044, 0.410894, 0.192198, 0.000000, 0.000000, 0.000000, 0.169695, 0.336999,<a name="line.272"></a>
+<span class="sourceLineNo">273</span>          0.506694, 0.684074, 0.876273, 1.094968, 1.364119, 1.754433 },<a name="line.273"></a>
+<span class="sourceLineNo">274</span>      { 1.247739, 0.857425, 0.588274, 0.369579, 0.177380, 0.000000, 0.000000, 0.000000, 0.167303,<a name="line.274"></a>
+<span class="sourceLineNo">275</span>          0.336999, 0.514379, 0.706577, 0.925273, 1.194423, 1.584738 },<a name="line.275"></a>
+<span class="sourceLineNo">276</span>      { 1.417434, 1.027120, 0.757969, 0.539274, 0.347076, 0.169695, 0.000000, 0.000000, 0.000000,<a name="line.276"></a>
+<span class="sourceLineNo">277</span>          0.169695, 0.347076, 0.539274, 0.757969, 1.027120, 1.417434 },<a name="line.277"></a>
+<span class="sourceLineNo">278</span>      { 1.584738, 1.194423, 0.925273, 0.706577, 0.514379, 0.336999, 0.167303, 0.000000, 0.000000,<a name="line.278"></a>
+<span class="sourceLineNo">279</span>          0.000000, 0.177380, 0.369579, 0.588274, 0.857425, 1.247739 },<a name="line.279"></a>
+<span class="sourceLineNo">280</span>      { 1.754433, 1.364119, 1.094968, 0.876273, 0.684074, 0.506694, 0.336999, 0.169695, 0.000000,<a name="line.280"></a>
+<span class="sourceLineNo">281</span>          0.000000, 0.000000, 0.192198, 0.410894, 0.680044, 1.070359 },<a name="line.281"></a>
+<span class="sourceLineNo">282</span>      { 1.931813, 1.541499, 1.272349, 1.053653, 0.861455, 0.684074, 0.514379, 0.347076, 0.177380,<a name="line.282"></a>
+<span class="sourceLineNo">283</span>          0.000000, 0.000000, 0.000000, 0.218696, 0.487846, 0.878160 },<a name="line.283"></a>
+<span class="sourceLineNo">284</span>      { 2.124012, 1.733697, 1.464547, 1.245851, 1.053653, 0.876273, 0.706577, 0.539274, 0.369579,<a name="line.284"></a>
+<span class="sourceLineNo">285</span>          0.192198, 0.000000, 0.000000, 0.000000, 0.269150, 0.659465 },<a name="line.285"></a>
+<span class="sourceLineNo">286</span>      { 2.342707, 1.952393, 1.683242, 1.464547, 1.272349, 1.094968, 0.925273, 0.757969, 0.588274,<a name="line.286"></a>
+<span class="sourceLineNo">287</span>          0.410894, 0.218696, 0.000000, 0.000000, 0.000000, 0.390314 },<a name="line.287"></a>
+<span class="sourceLineNo">288</span>      { 2.611858, 2.221543, 1.952393, 1.733697, 1.541499, 1.364119, 1.194423, 1.027120, 0.857425,<a name="line.288"></a>
+<span class="sourceLineNo">289</span>          0.680044, 0.487846, 0.269150, 0.000000, 0.000000, 0.000000 },<a name="line.289"></a>
+<span class="sourceLineNo">290</span>      { 3.002172, 2.611858, 2.342707, 2.124012, 1.931813, 1.754433, 1.584738, 1.417434, 1.247739,<a name="line.290"></a>
+<span class="sourceLineNo">291</span>          1.070359, 0.878160, 0.659465, 0.390314, 0.000000, 0.000000 } };<a name="line.291"></a>
+<span class="sourceLineNo">292</span><a name="line.292"></a>
+<span class="sourceLineNo">293</span>  private static final double[][] distance_case16 = {<a name="line.293"></a>
+<span class="sourceLineNo">294</span>      { 0.000000, 0.000000, 0.383771, 0.646974, 0.859631, 1.045344, 1.215481, 1.376810, 1.534121,<a name="line.294"></a>
+<span class="sourceLineNo">295</span>          1.691431, 1.852760, 2.022897, 2.208610, 2.421267, 2.684470, 3.068241 },<a name="line.295"></a>
+<span class="sourceLineNo">296</span>      { 0.000000, 0.000000, 0.000000, 0.263203, 0.475860, 0.661573, 0.831710, 0.993039, 1.150349,<a name="line.296"></a>
+<span class="sourceLineNo">297</span>          1.307660, 1.468989, 1.639126, 1.824839, 2.037496, 2.300699, 2.684470 },<a name="line.297"></a>
+<span class="sourceLineNo">298</span>      { 0.383771, 0.000000, 0.000000, 0.000000, 0.212657, 0.398370, 0.568507, 0.729836, 0.887147,<a name="line.298"></a>
+<span class="sourceLineNo">299</span>          1.044457, 1.205786, 1.375923, 1.561636, 1.774293, 2.037496, 2.421267 },<a name="line.299"></a>
+<span class="sourceLineNo">300</span>      { 0.646974, 0.263203, 0.000000, 0.000000, 0.000000, 0.185713, 0.355850, 0.517179, 0.674490,<a name="line.300"></a>
+<span class="sourceLineNo">301</span>          0.831800, 0.993129, 1.163266, 1.348980, 1.561636, 1.824839, 2.208610 },<a name="line.301"></a>
+<span class="sourceLineNo">302</span>      { 0.859631, 0.475860, 0.212657, 0.000000, 0.000000, 0.000000, 0.170137, 0.331466, 0.488776,<a name="line.302"></a>
+<span class="sourceLineNo">303</span>          0.646087, 0.807416, 0.977553, 1.163266, 1.375923, 1.639126, 2.022897 },<a name="line.303"></a>
+<span class="sourceLineNo">304</span>      { 1.045344, 0.661573, 0.398370, 0.185713, 0.000000, 0.000000, 0.000000, 0.161329, 0.318639,<a name="line.304"></a>
+<span class="sourceLineNo">305</span>          0.475950, 0.637279, 0.807416, 0.993129, 1.205786, 1.468989, 1.852760 },<a name="line.305"></a>
+<span class="sourceLineNo">306</span>      { 1.215481, 0.831710, 0.568507, 0.355850, 0.170137, 0.000000, 0.000000, 0.000000, 0.157311,<a name="line.306"></a>
+<span class="sourceLineNo">307</span>          0.314621, 0.475950, 0.646087, 0.831800, 1.044457, 1.307660, 1.691431 },<a name="line.307"></a>
+<span class="sourceLineNo">308</span>      { 1.376810, 0.993039, 0.729836, 0.517179, 0.331466, 0.161329, 0.000000, 0.000000, 0.000000,<a name="line.308"></a>
+<span class="sourceLineNo">309</span>          0.157311, 0.318639, 0.488776, 0.674490, 0.887147, 1.150349, 1.534121 },<a name="line.309"></a>
+<span class="sourceLineNo">310</span>      { 1.534121, 1.150349, 0.887147, 0.674490, 0.488776, 0.318639, 0.157311, 0.000000, 0.000000,<a name="line.310"></a>
+<span class="sourceLineNo">311</span>          0.000000, 0.161329, 0.331466, 0.517179, 0.729836, 0.993039, 1.376810 },<a name="line.311"></a>
+<span class="sourceLineNo">312</span>      { 1.691431, 1.307660, 1.044457, 0.831800, 0.646087, 0.475950, 0.314621, 0.157311, 0.000000,<a name="line.312"></a>
+<span class="sourceLineNo">313</span>          0.000000, 0.000000, 0.170137, 0.355850, 0.568507, 0.831710, 1.215481 },<a name="line.313"></a>
+<span class="sourceLineNo">314</span>      { 1.852760, 1.468989, 1.205786, 0.993129, 0.807416, 0.637279, 0.475950, 0.318639, 0.161329,<a name="line.314"></a>
+<span class="sourceLineNo">315</span>          0.000000, 0.000000, 0.000000, 0.185713, 0.398370, 0.661573, 1.045344 },<a name="line.315"></a>
+<span class="sourceLineNo">316</span>      { 2.022897, 1.639126, 1.375923, 1.163266, 0.977553, 0.807416, 0.646087, 0.488776, 0.331466,<a name="line.316"></a>
+<span class="sourceLineNo">317</span>          0.170137, 0.000000, 0.000000, 0.000000, 0.212657, 0.475860, 0.859631 },<a name="line.317"></a>
+<span class="sourceLineNo">318</span>      { 2.208610, 1.824839, 1.561636, 1.348980, 1.163266, 0.993129, 0.831800, 0.674490, 0.517179,<a name="line.318"></a>
+<span class="sourceLineNo">319</span>          0.355850, 0.185713, 0.000000, 0.000000, 0.000000, 0.263203, 0.646974 },<a name="line.319"></a>
+<span class="sourceLineNo">320</span>      { 2.421267, 2.037496, 1.774293, 1.561636, 1.375923, 1.205786, 1.044457, 0.887147, 0.729836,<a name="line.320"></a>
+<span class="sourceLineNo">321</span>          0.568507, 0.398370, 0.212657, 0.000000, 0.000000, 0.000000, 0.383771 },<a name="line.321"></a>
+<span class="sourceLineNo">322</span>      { 2.684470, 2.300699, 2.037496, 1.824839, 1.639126, 1.468989, 1.307660, 1.150349, 0.993039,<a name="line.322"></a>
+<span class="sourceLineNo">323</span>          0.831710, 0.661573, 0.475860, 0.263203, 0.000000, 0.000000, 0.000000 },<a name="line.323"></a>
+<span class="sourceLineNo">324</span>      { 3.068241, 2.684470, 2.421267, 2.208610, 2.022897, 1.852760, 1.691431, 1.534121, 1.376810,<a name="line.324"></a>
+<span class="sourceLineNo">325</span>          1.215481, 1.045344, 0.859631, 0.646974, 0.383771, 0.000000, 0.000000 } };<a name="line.325"></a>
+<span class="sourceLineNo">326</span><a name="line.326"></a>
+<span class="sourceLineNo">327</span>  private static final double[][] distance_case17 = {<a name="line.327"></a>
+<span class="sourceLineNo">328</span>      { 0.000000, 0.000000, 0.377895, 0.635827, 0.843204, 1.023331, 1.187335, 1.341719, 1.490935,<a name="line.328"></a>
+<span class="sourceLineNo">329</span>          1.638518, 1.787734, 1.942118, 2.106122, 2.286249, 2.493626, 2.751558, 3.129453 },<a name="line.329"></a>
+<span class="sourceLineNo">330</span>      { 0.000000, 0.000000, 0.000000, 0.257932, 0.465309, 0.645436, 0.809439, 0.963824, 1.113040,<a name="line.330"></a>
+<span class="sourceLineNo">331</span>          1.260623, 1.409839, 1.564223, 1.728227, 1.908354, 2.115731, 2.373663, 2.751558 },<a name="line.331"></a>
+<span class="sourceLineNo">332</span>      { 0.377895, 0.000000, 0.000000, 0.000000, 0.207377, 0.387504, 0.551508, 0.705892, 0.855108,<a name="line.332"></a>
+<span class="sourceLineNo">333</span>          1.002691, 1.151907, 1.306291, 1.470295, 1.650422, 1.857799, 2.115731, 2.493626 },<a name="line.333"></a>
+<span class="sourceLineNo">334</span>      { 0.635827, 0.257932, 0.000000, 0.000000, 0.000000, 0.180127, 0.344130, 0.498514, 0.647731,<a name="line.334"></a>
+<span class="sourceLineNo">335</span>          0.795314, 0.944530, 1.098914, 1.262917, 1.443045, 1.650422, 1.908354, 2.286249 },<a name="line.335"></a>
+<span class="sourceLineNo">336</span>      { 0.843204, 0.465309, 0.207377, 0.000000, 0.000000, 0.000000, 0.164003, 0.318387, 0.467604,<a name="line.336"></a>
+<span class="sourceLineNo">337</span>          0.615186, 0.764403, 0.918787, 1.082790, 1.262917, 1.470295, 1.728227, 2.106122 },<a name="line.337"></a>
+<span class="sourceLineNo">338</span>      { 1.023331, 0.645436, 0.387504, 0.180127, 0.000000, 0.000000, 0.000000, 0.154384, 0.303601,<a name="line.338"></a>
+<span class="sourceLineNo">339</span>          0.451183, 0.600400, 0.754784, 0.918787, 1.098914, 1.306291, 1.564223, 1.942118 },<a name="line.339"></a>
+<span class="sourceLineNo">340</span>      { 1.187335, 0.809439, 0.551508, 0.344130, 0.164003, 0.000000, 0.000000, 0.000000, 0.149217,<a name="line.340"></a>
+<span class="sourceLineNo">341</span>          0.296799, 0.446016, 0.600400, 0.764403, 0.944530, 1.151907, 1.409839, 1.787734 },<a name="line.341"></a>
+<span class="sourceLineNo">342</span>      { 1.341719, 0.963824, 0.705892, 0.498514, 0.318387, 0.154384, 0.000000, 0.000000, 0.000000,<a name="line.342"></a>
+<span class="sourceLineNo">343</span>          0.147583, 0.296799, 0.451183, 0.615186, 0.795314, 1.002691, 1.260623, 1.638518 },<a name="line.343"></a>
+<span class="sourceLineNo">344</span>      { 1.490935, 1.113040, 0.855108, 0.647731, 0.467604, 0.303601, 0.149217, 0.000000, 0.000000,<a name="line.344"></a>
+<span class="sourceLineNo">345</span>          0.000000, 0.149217, 0.303601, 0.467604, 0.647731, 0.855108, 1.113040, 1.490935 },<a name="line.345"></a>
+<span class="sourceLineNo">346</span>      { 1.638518, 1.260623, 1.002691, 0.795314, 0.615186, 0.451183, 0.296799, 0.147583, 0.000000,<a name="line.346"></a>
+<span class="sourceLineNo">347</span>          0.000000, 0.000000, 0.154384, 0.318387, 0.498514, 0.705892, 0.963824, 1.341719 },<a name="line.347"></a>
+<span class="sourceLineNo">348</span>      { 1.787734, 1.409839, 1.151907, 0.944530, 0.764403, 0.600400, 0.446016, 0.296799, 0.149217,<a name="line.348"></a>
+<span class="sourceLineNo">349</span>          0.000000, 0.000000, 0.000000, 0.164003, 0.344130, 0.551508, 0.809439, 1.187335 },<a name="line.349"></a>
+<span class="sourceLineNo">350</span>      { 1.942118, 1.564223, 1.306291, 1.098914, 0.918787, 0.754784, 0.600400, 0.451183, 0.303601,<a name="line.350"></a>
+<span class="sourceLineNo">351</span>          0.154384, 0.000000, 0.000000, 0.000000, 0.180127, 0.387504, 0.645436, 1.023331 },<a name="line.351"></a>
+<span class="sourceLineNo">352</span>      { 2.106122, 1.728227, 1.470295, 1.262917, 1.082790, 0.918787, 0.764403, 0.615186, 0.467604,<a name="line.352"></a>
+<span class="sourceLineNo">353</span>          0.318387, 0.164003, 0.000000, 0.000000, 0.000000, 0.207377, 0.465309, 0.843204 },<a name="line.353"></a>
+<span class="sourceLineNo">354</span>      { 2.286249, 1.908354, 1.650422, 1.443045, 1.262917, 1.098914, 0.944530, 0.795314, 0.647731,<a name="line.354"></a>
+<span class="sourceLineNo">355</span>          0.498514, 0.344130, 0.180127, 0.000000, 0.000000, 0.000000, 0.257932, 0.635827 },<a name="line.355"></a>
+<span class="sourceLineNo">356</span>      { 2.493626, 2.115731, 1.857799, 1.650422, 1.470295, 1.306291, 1.151907, 1.002691, 0.855108,<a name="line.356"></a>
+<span class="sourceLineNo">357</span>          0.705892, 0.551508, 0.387504, 0.207377, 0.000000, 0.000000, 0.000000, 0.377895 },<a name="line.357"></a>
+<span class="sourceLineNo">358</span>      { 2.751558, 2.373663, 2.115731, 1.908354, 1.728227, 1.564223, 1.409839, 1.260623, 1.113040,<a name="line.358"></a>
+<span class="sourceLineNo">359</span>          0.963824, 0.809439, 0.645436, 0.465309, 0.257932, 0.000000, 0.000000, 0.000000 },<a name="line.359"></a>
+<span class="sourceLineNo">360</span>      { 3.129453, 2.751558, 2.493626, 2.286249, 2.106122, 1.942118, 1.787734, 1.638518, 1.490935,<a name="line.360"></a>
+<span class="sourceLineNo">361</span>          1.341719, 1.187335, 1.023331, 0.843204, 0.635827, 0.377895, 0.000000, 0.000000 } };<a name="line.361"></a>
+<span class="sourceLineNo">362</span><a name="line.362"></a>
+<span class="sourceLineNo">363</span>  private static final double[][] distance_case18 = {<a name="line.363"></a>
+<span class="sourceLineNo">364</span>      { 0.000000, 0.000000, 0.372578, 0.625797, 0.828509, 1.003763, 1.162492, 1.311003, 1.453509,<a name="line.364"></a>
+<span class="sourceLineNo">365</span>          1.593219, 1.732929, 1.875435, 2.023946, 2.182675, 2.357928, 2.560640, 2.813859, 3.186438 },<a name="line.365"></a>
+<span class="sourceLineNo">366</span>      { 0.000000, 0.000000, 0.000000, 0.253219, 0.455931, 0.631185, 0.789913, 0.938424, 1.080930,<a name="line.366"></a>
+<span class="sourceLineNo">367</span>          1.220640, 1.360351, 1.502856, 1.651368, 1.810096, 1.985350, 2.188062, 2.441281, 2.813859 },<a name="line.367"></a>
+<span class="sourceLineNo">368</span>      { 0.372578, 0.000000, 0.000000, 0.000000, 0.202712, 0.377966, 0.536694, 0.685205, 0.827711,<a name="line.368"></a>
+<span class="sourceLineNo">369</span>          0.967422, 1.107132, 1.249638, 1.398149, 1.556877, 1.732131, 1.934843, 2.188062, 2.560640 },<a name="line.369"></a>
+<span class="sourceLineNo">370</span>      { 0.625797, 0.253219, 0.000000, 0.000000, 0.000000, 0.175254, 0.333982, 0.482494, 0.624999,<a name="line.370"></a>
+<span class="sourceLineNo">371</span>          0.764710, 0.904420, 1.046926, 1.195437, 1.354165, 1.529419, 1.732131, 1.985350, 2.357928 },<a name="line.371"></a>
+<span class="sourceLineNo">372</span>      { 0.828509, 0.455931, 0.202712, 0.000000, 0.000000, 0.000000, 0.158728, 0.307240, 0.449745,<a name="line.372"></a>
+<span class="sourceLineNo">373</span>          0.589456, 0.729166, 0.871672, 1.020183, 1.178912, 1.354165, 1.556877, 1.810096, 2.182675 },<a name="line.373"></a>
+<span class="sourceLineNo">374</span>      { 1.003763, 0.631185, 0.377966, 0.175254, 0.000000, 0.000000, 0.000000, 0.148511, 0.291017,<a name="line.374"></a>
+<span class="sourceLineNo">375</span>          0.430727, 0.570438, 0.712943, 0.861455, 1.020183, 1.195437, 1.398149, 1.651368, 2.023946 },<a name="line.375"></a>
+<span class="sourceLineNo">376</span>      { 1.162492, 0.789913, 0.536694, 0.333982, 0.158728, 0.000000, 0.000000, 0.000000, 0.142506,<a name="line.376"></a>
+<span class="sourceLineNo">377</span>          0.282216, 0.421926, 0.564432, 0.712943, 0.871672, 1.046926, 1.249638, 1.502856, 1.875435 },<a name="line.377"></a>
+<span class="sourceLineNo">378</span>      { 1.311003, 0.938424, 0.685205, 0.482494, 0.307240, 0.148511, 0.000000, 0.000000, 0.000000,<a name="line.378"></a>
+<span class="sourceLineNo">379</span>          0.139710, 0.279421, 0.421926, 0.570438, 0.729166, 0.904420, 1.107132, 1.360351, 1.732929 },<a name="line.379"></a>
+<span class="sourceLineNo">380</span>      { 1.453509, 1.080930, 0.827711, 0.624999, 0.449745, 0.291017, 0.142506, 0.000000, 0.000000,<a name="line.380"></a>
+<span class="sourceLineNo">381</span>          0.000000, 0.139710, 0.282216, 0.430727, 0.589456, 0.764710, 0.967422, 1.220640, 1.593219 },<a name="line.381"></a>
+<span class="sourceLineNo">382</span>      { 1.593219, 1.220640, 0.967422, 0.764710, 0.589456, 0.430727, 0.282216, 0.139710, 0.000000,<a name="line.382"></a>
+<span class="sourceLineNo">383</span>          0.000000, 0.000000, 0.142506, 0.291017, 0.449745, 0.624999, 0.827711, 1.080930, 1.453509 },<a name="line.383"></a>
+<span class="sourceLineNo">384</span>      { 1.732929, 1.360351, 1.107132, 0.904420, 0.729166, 0.570438, 0.421926, 0.279421, 0.139710,<a name="line.384"></a>
+<span class="sourceLineNo">385</span>          0.000000, 0.000000, 0.000000, 0.148511, 0.307240, 0.482494, 0.685205, 0.938424, 1.311003 },<a name="line.385"></a>
+<span class="sourceLineNo">386</span>      { 1.875435, 1.502856, 1.249638, 1.046926, 0.871672, 0.712943, 0.564432, 0.421926, 0.282216,<a name="line.386"></a>
+<span class="sourceLineNo">387</span>          0.142506, 0.000000, 0.000000, 0.000000, 0.158728, 0.333982, 0.536694, 0.789913, 1.162492 },<a name="line.387"></a>
+<span class="sourceLineNo">388</span>      { 2.023946, 1.651368, 1.398149, 1.195437, 1.020183, 0.861455, 0.712943, 0.570438, 0.430727,<a name="line.388"></a>
+<span class="sourceLineNo">389</span>          0.291017, 0.148511, 0.000000, 0.000000, 0.000000, 0.175254, 0.377966, 0.631185, 1.003763 },<a name="line.389"></a>
+<span class="sourceLineNo">390</span>      { 2.182675, 1.810096, 1.556877, 1.354165, 1.178912, 1.020183, 0.871672, 0.729166, 0.589456,<a name="line.390"></a>
+<span class="sourceLineNo">391</span>          0.449745, 0.307240, 0.158728, 0.000000, 0.000000, 0.000000, 0.202712, 0.455931, 0.828509 },<a name="line.391"></a>
+<span class="sourceLineNo">392</span>      { 2.357928, 1.985350, 1.732131, 1.529419, 1.354165, 1.195437, 1.046926, 0.904420, 0.764710,<a name="line.392"></a>
+<span class="sourceLineNo">393</span>          0.624999, 0.482494, 0.333982, 0.175254, 0.000000, 0.000000, 0.000000, 0.253219, 0.625797 },<a name="line.393"></a>
+<span class="sourceLineNo">394</span>      { 2.560640, 2.188062, 1.934843, 1.732131, 1.556877, 1.398149, 1.249638, 1.107132, 0.967422,<a name="line.394"></a>
+<span class="sourceLineNo">395</span>          0.827711, 0.685205, 0.536694, 0.377966, 0.202712, 0.000000, 0.000000, 0.000000, 0.372578 },<a name="line.395"></a>
+<span class="sourceLineNo">396</span>      { 2.813859, 2.441281, 2.188062, 1.985350, 1.810096, 1.651368, 1.502856, 1.360351, 1.220640,<a name="line.396"></a>
+<span class="sourceLineNo">397</span>          1.080930, 0.938424, 0.789913, 0.631185, 0.455931, 0.253219, 0.000000, 0.000000, 0.000000 },<a name="line.397"></a>
+<span class="sourceLineNo">398</span>      { 3.186438, 2.813859, 2.560640, 2.357928, 2.182675, 2.023946, 1.875435, 1.732929, 1.593219,<a name="line.398"></a>
+<span class="sourceLineNo">399</span>          1.453509, 1.311003, 1.162492, 1.003763, 0.828509, 0.625797, 0.372578, 0.000000, 0.000000 } };<a name="line.399"></a>
+<span class="sourceLineNo">400</span><a name="line.400"></a>
+<span class="sourceLineNo">401</span>  private static final double[][] distance_case19 = {<a name="line.401"></a>
+<span class="sourceLineNo">402</span>      { 0.000000, 0.000000, 0.367737, 0.616708, 0.815260, 0.986216, 1.140351, 1.283818, 1.420655,<a name="line.402"></a>
+<span class="sourceLineNo">403</span>          1.553844, 1.685868, 1.819058, 1.955894, 2.099362, 2.253496, 2.424453, 2.623004, 2.871976,<a name="line.403"></a>
+<span class="sourceLineNo">404</span>          3.239713 },<a name="line.404"></a>
+<span class="sourceLineNo">405</span>      { 0.000000, 0.000000, 0.000000, 0.248972, 0.447523, 0.618480, 0.772614, 0.916081, 1.052918,<a name="line.405"></a>
+<span class="sourceLineNo">406</span>          1.186108, 1.318131, 1.451321, 1.588158, 1.731625, 1.885760, 2.056716, 2.255267, 2.504239,<a name="line.406"></a>
+<span class="sourceLineNo">407</span>          2.871976 },<a name="line.407"></a>
+<span class="sourceLineNo">408</span>      { 0.367737, 0.000000, 0.000000, 0.000000, 0.198552, 0.369508, 0.523642, 0.667110, 0.803947,<a name="line.408"></a>
+<span class="sourceLineNo">409</span>          0.937136, 1.069160, 1.202349, 1.339186, 1.482654, 1.636788, 1.807744, 2.006296, 2.255267,<a name="line.409"></a>
+<span class="sourceLineNo">410</span>          2.623004 },<a name="line.410"></a>
+<span class="sourceLineNo">411</span>      { 0.616708, 0.248972, 0.000000, 0.000000, 0.000000, 0.170956, 0.325091, 0.468558, 0.605395,<a name="line.411"></a>
+<span class="sourceLineNo">412</span>          0.738585, 0.870608, 1.003798, 1.140635, 1.284102, 1.438236, 1.609193, 1.807744, 2.056716,<a name="line.412"></a>
+<span class="sourceLineNo">413</span>          2.424453 },<a name="line.413"></a>
+<span class="sourceLineNo">414</span>      { 0.815260, 0.447523, 0.198552, 0.000000, 0.000000, 0.000000, 0.154134, 0.297602, 0.434439,<a name="line.414"></a>
+<span class="sourceLineNo">415</span>          0.567628, 0.699652, 0.832841, 0.969678, 1.113146, 1.267280, 1.438236, 1.636788, 1.885760,<a name="line.415"></a>
+<span class="sourceLineNo">416</span>          2.253496 },<a name="line.416"></a>
+<span class="sourceLineNo">417</span>      { 0.986216, 0.618480, 0.369508, 0.170956, 0.000000, 0.000000, 0.000000, 0.143468, 0.280304,<a name="line.417"></a>
+<span class="sourceLineNo">418</span>          0.413494, 0.545517, 0.678707, 0.815544, 0.959011, 1.113146, 1.284102, 1.482654, 1.731625,<a name="line.418"></a>
+<span class="sourceLineNo">419</span>          2.099362 },<a name="line.419"></a>
+<span class="sourceLineNo">420</span>      { 1.140351, 0.772614, 0.523642, 0.325091, 0.154134, 0.000000, 0.000000, 0.000000, 0.136837,<a name="line.420"></a>
+<span class="sourceLineNo">421</span>          0.270026, 0.402050, 0.535239, 0.672076, 0.815544, 0.969678, 1.140635, 1.339186, 1.588158,<a name="line.421"></a>
+<span class="sourceLineNo">422</span>          1.955894 },<a name="line.422"></a>
+<span class="sourceLineNo">423</span>      { 1.283818, 0.916081, 0.667110, 0.468558, 0.297602, 0.143468, 0.000000, 0.000000, 0.000000,<a name="line.423"></a>
+<span class="sourceLineNo">424</span>          0.133190, 0.265213, 0.398403, 0.535239, 0.678707, 0.832841, 1.003798, 1.202349, 1.451321,<a name="line.424"></a>
+<span class="sourceLineNo">425</span>          1.819058 },<a name="line.425"></a>
+<span class="sourceLineNo">426</span>      { 1.420655, 1.052918, 0.803947, 0.605395, 0.434439, 0.280304, 0.136837, 0.000000, 0.000000,<a name="line.426"></a>
+<span class="sourceLineNo">427</span>          0.000000, 0.132024, 0.265213, 0.402050, 0.545517, 0.699652, 0.870608, 1.069160, 1.318131,<a name="line.427"></a>
+<span class="sourceLineNo">428</span>          1.685868 },<a name="line.428"></a>
+<span class="sourceLineNo">429</span>      { 1.553844, 1.186108, 0.937136, 0.738585, 0.567628, 0.413494, 0.270026, 0.133190, 0.000000,<a name="line.429"></a>
+<span class="sourceLineNo">430</span>          0.000000, 0.000000, 0.133190, 0.270026, 0.413494, 0.567628, 0.738585, 0.937136, 1.186108,<a name="line.430"></a>
+<span class="sourceLineNo">431</span>          1.553844 },<a name="line.431"></a>
+<span class="sourceLineNo">432</span>      { 1.685868, 1.318131, 1.069160, 0.870608, 0.699652, 0.545517, 0.402050, 0.265213, 0.132024,<a name="line.432"></a>
+<span class="sourceLineNo">433</span>          0.000000, 0.000000, 0.000000, 0.136837, 0.280304, 0.434439, 0.605395, 0.803947, 1.052918,<a name="line.433"></a>
+<span class="sourceLineNo">434</span>          1.420655 },<a name="line.434"></a>
+<span class="sourceLineNo">435</span>      { 1.819058, 1.451321, 1.202349, 1.003798, 0.832841, 0.678707, 0.535239, 0.398403, 0.265213,<a name="line.435"></a>
+<span class="sourceLineNo">436</span>          0.133190, 0.000000, 0.000000, 0.000000, 0.143468, 0.297602, 0.468558, 0.667110, 0.916081,<a name="line.436"></a>
+<span class="sourceLineNo">437</span>          1.283818 },<a name="line.437"></a>
+<span class="sourceLineNo">438</span>      { 1.955894, 1.588158, 1.339186, 1.140635, 0.969678, 0.815544, 0.672076, 0.535239, 0.402050,<a name="line.438"></a>
+<span class="sourceLineNo">439</span>          0.270026, 0.136837, 0.000000, 0.000000, 0.000000, 0.154134, 0.325091, 0.523642, 0.772614,<a name="line.439"></a>
+<span class="sourceLineNo">440</span>          1.140351 },<a name="line.440"></a>
+<span class="sourceLineNo">441</span>      { 2.099362, 1.731625, 1.482654, 1.284102, 1.113146, 0.959011, 0.815544, 0.678707, 0.545517,<a name="line.441"></a>
+<span class="sourceLineNo">442</span>          0.413494, 0.280304, 0.143468, 0.000000, 0.000000, 0.000000, 0.170956, 0.369508, 0.618480,<a name="line.442"></a>
+<span class="sourceLineNo">443</span>          0.986216 },<a name="line.443"></a>
+<span class="sourceLineNo">444</span>      { 2.253496, 1.885760, 1.636788, 1.438236, 1.267280, 1.113146, 0.969678, 0.832841, 0.699652,<a name="line.444"></a>
+<span class="sourceLineNo">445</span>          0.567628, 0.434439, 0.297602, 0.154134, 0.000000, 0.000000, 0.000000, 0.198552, 0.447523,<a name="line.445"></a>
+<span class="sourceLineNo">446</span>          0.815260 },<a name="line.446"></a>
+<span class="sourceLineNo">447</span>      { 2.424453, 2.056716, 1.807744, 1.609193, 1.438236, 1.284102, 1.140635, 1.003798, 0.870608,<a name="line.447"></a>
+<span class="sourceLineNo">448</span>          0.738585, 0.605395, 0.468558, 0.325091, 0.170956, 0.000000, 0.000000, 0.000000, 0.248972,<a name="line.448"></a>
+<span class="sourceLineNo">449</span>          0.616708 },<a name="line.449"></a>
+<span class="sourceLineNo">450</span>      { 2.623004, 2.255267, 2.006296, 1.807744, 1.636788, 1.482654, 1.339186, 1.202349, 1.069160,<a name="line.450"></a>
+<span class="sourceLineNo">451</span>          0.937136, 0.803947, 0.667110, 0.523642, 0.369508, 0.198552, 0.000000, 0.000000, 0.000000,<a name="line.451"></a>
+<span class="sourceLineNo">452</span>          0.367737 },<a name="line.452"></a>
+<span class="sourceLineNo">453</span>      { 2.871976, 2.504239, 2.255267, 2.056716, 1.885760, 1.731625, 1.588158, 1.451321, 1.318131,<a name="line.453"></a>
+<span class="sourceLineNo">454</span>          1.186108, 1.052918, 0.916081, 0.772614, 0.618480, 0.447523, 0.248972, 0.000000, 0.000000,<a name="line.454"></a>
+<span class="sourceLineNo">455</span>          0.000000 },<a name="line.455"></a>
+<span class="sourceLineNo">456</span>      { 3.239713, 2.871976, 2.623004, 2.424453, 2.253496, 2.099362, 1.955894, 1.819058, 1.685868,<a name="line.456"></a>
+<span class="sourceLineNo">457</span>          1.553844, 1.420655, 1.283818, 1.140351, 0.986216, 0.815260, 0.616708, 0.367737, 0.000000,<a name="line.457"></a>
+<span class="sourceLineNo">458</span>          0.000000 } };<a name="line.458"></a>
+<span class="sourceLineNo">459</span><a name="line.459"></a>
+<span class="sourceLineNo">460</span>  private static final double[][] distance_case20 = {<a name="line.460"></a>
+<span class="sourceLineNo">461</span>      { 0.000000, 0.000000, 0.363302, 0.608420, 0.803232, 0.970364, 1.120453, 1.259533, 1.391507,<a name="line.461"></a>
+<span class="sourceLineNo">462</span>          1.519192, 1.644854, 1.770515, 1.898201, 2.030174, 2.169254, 2.319343, 2.486475, 2.681287,<a name="line.462"></a>
+<span class="sourceLineNo">463</span>          2.926405, 3.289707 },<a name="line.463"></a>
+<span class="sourceLineNo">464</span>      { 0.000000, 0.000000, 0.000000, 0.245118, 0.439930, 0.607062, 0.757151, 0.896231, 1.028204,<a name="line.464"></a>
+<span class="sourceLineNo">465</span>          1.155890, 1.281552, 1.407213, 1.534899, 1.666872, 1.805952, 1.956041, 2.123173, 2.317985,<a name="line.465"></a>
+<span class="sourceLineNo">466</span>          2.563103, 2.926405 },<a name="line.466"></a>
+<span class="sourceLineNo">467</span>      { 0.363302, 0.000000, 0.000000, 0.000000, 0.194812, 0.361944, 0.512033, 0.651113, 0.783086,<a name="line.467"></a>
+<span class="sourceLineNo">468</span>          0.910772, 1.036433, 1.162095, 1.289780, 1.421754, 1.560834, 1.710923, 1.878055, 2.072867,<a name="line.468"></a>
+<span class="sourceLineNo">469</span>          2.317985, 2.681287 },<a name="line.469"></a>
+<span class="sourceLineNo">470</span>      { 0.608420, 0.245118, 0.000000, 0.000000, 0.000000, 0.167131, 0.317221, 0.456301, 0.588274,<a name="line.470"></a>
+<span class="sourceLineNo">471</span>          0.715960, 0.841621, 0.967283, 1.094968, 1.226942, 1.366022, 1.516111, 1.683242, 1.878055,<a name="line.471"></a>
+<span class="sourceLineNo">472</span>          2.123173, 2.486475 },<a name="line.472"></a>
+<span class="sourceLineNo">473</span>      { 0.803232, 0.439930, 0.194812, 0.000000, 0.000000, 0.000000, 0.150089, 0.289169, 0.421143,<a name="line.473"></a>
+<span class="sourceLineNo">474</span>          0.548828, 0.674490, 0.800151, 0.927837, 1.059810, 1.198890, 1.348980, 1.516111, 1.710923,<a name="line.474"></a>
+<span class="sourceLineNo">475</span>          1.956041, 2.319343 },<a name="line.475"></a>
+<span class="sourceLineNo">476</span>      { 0.970364, 0.607062, 0.361944, 0.167131, 0.000000, 0.000000, 0.000000, 0.139080, 0.271053,<a name="line.476"></a>
+<span class="sourceLineNo">477</span>          0.398739, 0.524401, 0.650062, 0.777748, 0.909721, 1.048801, 1.198890, 1.366022, 1.560834,<a name="line.477"></a>
+<span class="sourceLineNo">478</span>          1.805952, 2.169254 },<a name="line.478"></a>
+<span class="sourceLineNo">479</span>      { 1.120453, 0.757151, 0.512033, 0.317221, 0.150089, 0.000000, 0.000000, 0.000000, 0.131973,<a name="line.479"></a>
+<span class="sourceLineNo">480</span>          0.259659, 0.385320, 0.510982, 0.638668, 0.770641, 0.909721, 1.059810, 1.226942, 1.421754,<a name="line.480"></a>
+<span class="sourceLineNo">481</span>          1.666872, 2.030174 },<a name="line.481"></a>
+<span class="sourceLineNo">482</span>      { 1.259533, 0.896231, 0.651113, 0.456301, 0.289169, 0.139080, 0.000000, 0.000000, 0.000000,<a name="line.482"></a>
+<span class="sourceLineNo">483</span>          0.127686, 0.253347, 0.379008, 0.506694, 0.638668, 0.777748, 0.927837, 1.094968, 1.289780,<a name="line.483"></a>
+<span class="sourceLineNo">484</span>          1.534899, 1.898201 },<a name="line.484"></a>
+<span class="sourceLineNo">485</span>      { 1.391507, 1.028204, 0.783086, 0.588274, 0.421143, 0.271053, 0.131973, 0.000000, 0.000000,<a name="line.485"></a>
+<span class="sourceLineNo">486</span>          0.000000, 0.125661, 0.251323, 0.379008, 0.510982, 0.650062, 0.800151, 0.967283, 1.162095,<a name="line.486"></a>
+<span class="sourceLineNo">487</span>          1.407213, 1.770515 },<a name="line.487"></a>
+<span class="sourceLineNo">488</span>      { 1.519192, 1.155890, 0.910772, 0.715960, 0.548828, 0.398739, 0.259659, 0.127686, 0.000000,<a name="line.488"></a>
+<span class="sourceLineNo">489</span>          0.000000, 0.000000, 0.125661, 0.253347, 0.385320, 0.524401, 0.674490, 0.841621, 1.036433,<a name="line.489"></a>
+<span class="sourceLineNo">490</span>          1.281552, 1.644854 },<a name="line.490"></a>
+<span class="sourceLineNo">491</span>      { 1.644854, 1.281552, 1.036433, 0.841621, 0.674490, 0.524401, 0.385320, 0.253347, 0.125661,<a name="line.491"></a>
+<span class="sourceLineNo">492</span>          0.000000, 0.000000, 0.000000, 0.127686, 0.259659, 0.398739, 0.548828, 0.715960, 0.910772,<a name="line.492"></a>
+<span class="sourceLineNo">493</span>          1.155890, 1.519192 },<a name="line.493"></a>
+<span class="sourceLineNo">494</span>      { 1.770515, 1.407213, 1.162095, 0.967283, 0.800151, 0.650062, 0.510982, 0.379008, 0.251323,<a name="line.494"></a>
+<span class="sourceLineNo">495</span>          0.125661, 0.000000, 0.000000, 0.000000, 0.131973, 0.271053, 0.421143, 0.588274, 0.783086,<a name="line.495"></a>
+<span class="sourceLineNo">496</span>          1.028204, 1.391507 },<a name="line.496"></a>
+<span class="sourceLineNo">497</span>      { 1.898201, 1.534899, 1.289780, 1.094968, 0.927837, 0.777748, 0.638668, 0.506694, 0.379008,<a name="line.497"></a>
+<span class="sourceLineNo">498</span>          0.253347, 0.127686, 0.000000, 0.000000, 0.000000, 0.139080, 0.289169, 0.456301, 0.651113,<a name="line.498"></a>
+<span class="sourceLineNo">499</span>          0.896231, 1.259533 },<a name="line.499"></a>
+<span class="sourceLineNo">500</span>      { 2.030174, 1.666872, 1.421754, 1.226942, 1.059810, 0.909721, 0.770641, 0.638668, 0.510982,<a name="line.500"></a>
+<span class="sourceLineNo">501</span>          0.385320, 0.259659, 0.131973, 0.000000, 0.000000, 0.000000, 0.150089, 0.317221, 0.512033,<a name="line.501"></a>
+<span class="sourceLineNo">502</span>          0.757151, 1.120453 },<a name="line.502"></a>
+<span class="sourceLineNo">503</span>      { 2.169254, 1.805952, 1.560834, 1.366022, 1.198890, 1.048801, 0.909721, 0.777748, 0.650062,<a name="line.503"></a>
+<span class="sourceLineNo">504</span>          0.524401, 0.398739, 0.271053, 0.139080, 0.000000, 0.000000, 0.000000, 0.167131, 0.361944,<a name="line.504"></a>
+<span class="sourceLineNo">505</span>          0.607062, 0.970364 },<a name="line.505"></a>
+<span class="sourceLineNo">506</span>      { 2.319343, 1.956041, 1.710923, 1.516111, 1.348980, 1.198890, 1.059810, 0.927837, 0.800151,<a name="line.506"></a>
+<span class="sourceLineNo">507</span>          0.674490, 0.548828, 0.421143, 0.289169, 0.150089, 0.000000, 0.000000, 0.000000, 0.194812,<a name="line.507"></a>
+<span class="sourceLineNo">508</span>          0.439930, 0.803232 },<a name="line.508"></a>
+<span class="sourceLineNo">509</span>      { 2.486475, 2.123173, 1.878055, 1.683242, 1.516111, 1.366022, 1.226942, 1.094968, 0.967283,<a name="line.509"></a>
+<span class="sourceLineNo">510</span>          0.841621, 0.715960, 0.588274, 0.456301, 0.317221, 0.167131, 0.000000, 0.000000, 0.000000,<a name="line.510"></a>
+<span class="sourceLineNo">511</span>          0.245118, 0.608420 },<a name="line.511"></a>
+<span class="sourceLineNo">512</span>      { 2.681287, 2.317985, 2.072867, 1.878055, 1.710923, 1.560834, 1.421754, 1.289780, 1.162095,<a name="line.512"></a>
+<span class="sourceLineNo">513</span>          1.036433, 0.910772, 0.783086, 0.651113, 0.512033, 0.361944, 0.194812, 0.000000, 0.000000,<a name="line.513"></a>
+<span class="sourceLineNo">514</span>          0.000000, 0.363302 },<a name="line.514"></a>
+<span class="sourceLineNo">515</span>      { 2.926405, 2.563103, 2.317985, 2.123173, 1.956041, 1.805952, 1.666872, 1.534899, 1.407213,<a name="line.515"></a>
+<span class="sourceLineNo">516</span>          1.281552, 1.155890, 1.028204, 0.896231, 0.757151, 0.607062, 0.439930, 0.245118, 0.000000,<a name="line.516"></a>
+<span class="sourceLineNo">517</span>          0.000000, 0.000000 },<a name="line.517"></a>
+<span class="sourceLineNo">518</span>      { 3.289707, 2.926405, 2.681287, 2.486475, 2.319343, 2.169254, 2.030174, 1.898201, 1.770515,<a name="line.518"></a>
+<span class="sourceLineNo">519</span>          1.644854, 1.519192, 1.391507, 1.259533, 1.120453, 0.970364, 0.803232, 0.608420, 0.363302,<a name="line.519"></a>
+<span class="sourceLineNo">520</span>          0.000000, 0.000000 } };<a name="line.520"></a>
+<span class="sourceLineNo">521</span><a name="line.521"></a>
+<span class="sourceLineNo">522</span>  /**<a name="line.522"></a>
+<span class="sourceLineNo">523</span>   * Constructor.<a name="line.523"></a>
+<span class="sourceLineNo">524</span>   */<a name="line.524"></a>
+<span class="sourceLineNo">525</span>  public NormalAlphabet() {<a name="line.525"></a>
+<span class="sourceLineNo">526</span>    super();<a name="line.526"></a>
+<span class="sourceLineNo">527</span>  }<a name="line.527"></a>
+<span class="sourceLineNo">528</span><a name="line.528"></a>
+<span class="sourceLineNo">529</span>  /**<a name="line.529"></a>
+<span class="sourceLineNo">530</span>   * {@inheritDoc}<a name="line.530"></a>
+<span class="sourceLineNo">531</span>   */<a name="line.531"></a>
+<span class="sourceLineNo">532</span>  @Override<a name="line.532"></a>
+<span class="sourceLineNo">533</span>  public double[] getCuts(Integer size) throws SAXException {<a name="line.533"></a>
+<span class="sourceLineNo">534</span>    switch (size) {<a name="line.534"></a>
+<span class="sourceLineNo">535</span>    case 2:<a name="line.535"></a>
+<span class="sourceLineNo">536</span>      return case2;<a name="line.536"></a>
+<span class="sourceLineNo">537</span>    case 3:<a name="line.537"></a>
+<span class="sourceLineNo">538</span>      return case3;<a name="line.538"></a>
+<span class="sourceLineNo">539</span>    case 4:<a name="line.539"></a>
+<span class="sourceLineNo">540</span>      return case4;<a name="line.540"></a>
+<span class="sourceLineNo">541</span>    case 5:<a name="line.541"></a>
+<span class="sourceLineNo">542</span>      return case5;<a name="line.542"></a>
+<span class="sourceLineNo">543</span>    case 6:<a name="line.543"></a>
+<span class="sourceLineNo">544</span>      return case6;<a name="line.544"></a>
+<span class="sourceLineNo">545</span>    case 7:<a name="line.545"></a>
+<span class="sourceLineNo">546</span>      return case7;<a name="line.546"></a>
+<span class="sourceLineNo">547</span>    case 8:<a name="line.547"></a>
+<span class="sourceLineNo">548</span>      return case8;<a name="line.548"></a>
+<span class="sourceLineNo">549</span>    case 9:<a name="line.549"></a>
+<span class="sourceLineNo">550</span>      return case9;<a name="line.550"></a>
+<span class="sourceLineNo">551</span>    case 10:<a name="line.551"></a>
+<span class="sourceLineNo">552</span>      return case10;<a name="line.552"></a>
+<span class="sourceLineNo">553</span>    case 11:<a name="line.553"></a>
+<span class="sourceLineNo">554</span>      return case11;<a name="line.554"></a>
+<span class="sourceLineNo">555</span>    case 12:<a name="line.555"></a>
+<span class="sourceLineNo">556</span>      return case12;<a name="line.556"></a>
+<span class="sourceLineNo">557</span>    case 13:<a name="line.557"></a>
+<span class="sourceLineNo">558</span>      return case13;<a name="line.558"></a>
+<span class="sourceLineNo">559</span>    case 14:<a name="line.559"></a>
+<span class="sourceLineNo">560</span>      return case14;<a name="line.560"></a>
+<span class="sourceLineNo">561</span>    case 15:<a name="line.561"></a>
+<span class="sourceLineNo">562</span>      return case15;<a name="line.562"></a>
+<span class="sourceLineNo">563</span>    case 16:<a name="line.563"></a>
+<span class="sourceLineNo">564</span>      return case16;<a name="line.564"></a>
+<span class="sourceLineNo">565</span>    case 17:<a name="line.565"></a>
+<span class="sourceLineNo">566</span>      return case17;<a name="line.566"></a>
+<span class="sourceLineNo">567</span>    case 18:<a name="line.567"></a>
+<span class="sourceLineNo">568</span>      return case18;<a name="line.568"></a>
+<span class="sourceLineNo">569</span>    case 19:<a name="line.569"></a>
+<span class="sourceLineNo">570</span>      return case19;<a name="line.570"></a>
+<span class="sourceLineNo">571</span>    case 20:<a name="line.571"></a>
+<span class="sourceLineNo">572</span>      return case20;<a name="line.572"></a>
+<span class="sourceLineNo">573</span>    default:<a name="line.573"></a>
+<span class="sourceLineNo">574</span>      throw new SAXException("Invalid alphabet size.");<a name="line.574"></a>
+<span class="sourceLineNo">575</span>    }<a name="line.575"></a>
+<span class="sourceLineNo">576</span>  }<a name="line.576"></a>
+<span class="sourceLineNo">577</span><a name="line.577"></a>
+<span class="sourceLineNo">578</span>  /**<a name="line.578"></a>
+<span class="sourceLineNo">579</span>   * {@inheritDoc}<a name="line.579"></a>
+<span class="sourceLineNo">580</span>   */<a name="line.580"></a>
+<span class="sourceLineNo">581</span>  @Override<a name="line.581"></a>
+<span class="sourceLineNo">582</span>  public Integer getMaxSize() {<a name="line.582"></a>
+<span class="sourceLineNo">583</span>    return MAX_SIZE;<a name="line.583"></a>
+<span class="sourceLineNo">584</span>  }<a name="line.584"></a>
+<span class="sourceLineNo">585</span><a name="line.585"></a>
+<span class="sourceLineNo">586</span>  @Override<a name="line.586"></a>
+<span class="sourceLineNo">587</span>  public double[][] getDistanceMatrix(Integer size) throws SAXException {<a name="line.587"></a>
+<span class="sourceLineNo">588</span>    switch (size) {<a name="line.588"></a>
+<span class="sourceLineNo">589</span>    case 2:<a name="line.589"></a>
+<span class="sourceLineNo">590</span>      return distance_case2;<a name="line.590"></a>
+<span class="sourceLineNo">591</span>    case 3:<a name="line.591"></a>
+<span class="sourceLineNo">592</span>      return distance_case3;<a name="line.592"></a>
+<span class="sourceLineNo">593</span>    case 4:<a name="line.593"></a>
+<span class="sourceLineNo">594</span>      return distance_case4;<a name="line.594"></a>
+<span class="sourceLineNo">595</span>    case 5:<a name="line.595"></a>
+<span class="sourceLineNo">596</span>      return distance_case5;<a name="line.596"></a>
+<span class="sourceLineNo">597</span>    case 6:<a name="line.597"></a>
+<span class="sourceLineNo">598</span>      return distance_case6;<a name="line.598"></a>
+<span class="sourceLineNo">599</span>    case 7:<a name="line.599"></a>
+<span class="sourceLineNo">600</span>      return distance_case7;<a name="line.600"></a>
+<span class="sourceLineNo">601</span>    case 8:<a name="line.601"></a>
+<span class="sourceLineNo">602</span>      return distance_case8;<a name="line.602"></a>
+<span class="sourceLineNo">603</span>    case 9:<a name="line.603"></a>
+<span class="sourceLineNo">604</span>      return distance_case9;<a name="line.604"></a>
+<span class="sourceLineNo">605</span>    case 10:<a name="line.605"></a>
+<span class="sourceLineNo">606</span>      return distance_case10;<a name="line.606"></a>
+<span class="sourceLineNo">607</span>    case 11:<a name="line.607"></a>
+<span class="sourceLineNo">608</span>      return distance_case11;<a name="line.608"></a>
+<span class="sourceLineNo">609</span>    case 12:<a name="line.609"></a>
+<span class="sourceLineNo">610</span>      return distance_case12;<a name="line.610"></a>
+<span class="sourceLineNo">611</span>    case 13:<a name="line.611"></a>
+<span class="sourceLineNo">612</span>      return distance_case13;<a name="line.612"></a>
+<span class="sourceLineNo">613</span>    case 14:<a name="line.613"></a>
+<span class="sourceLineNo">614</span>      return distance_case14;<a name="line.614"></a>
+<span class="sourceLineNo">615</span>    case 15:<a name="line.615"></a>
+<span class="sourceLineNo">616</span>      return distance_case15;<a name="line.616"></a>
+<span class="sourceLineNo">617</span>    case 16:<a name="line.617"></a>
+<span class="sourceLineNo">618</span>      return distance_case16;<a name="line.618"></a>
+<span class="sourceLineNo">619</span>    case 17:<a name="line.619"></a>
+<span class="sourceLineNo">620</span>      return distance_case17;<a name="line.620"></a>
+<span class="sourceLineNo">621</span>    case 18:<a name="line.621"></a>
+<span class="sourceLineNo">622</span>      return distance_case18;<a name="line.622"></a>
+<span class="sourceLineNo">623</span>    case 19:<a name="line.623"></a>
+<span class="sourceLineNo">624</span>      return distance_case19;<a name="line.624"></a>
+<span class="sourceLineNo">625</span>    case 20:<a name="line.625"></a>
+<span class="sourceLineNo">626</span>      return distance_case20;<a name="line.626"></a>
+<span class="sourceLineNo">627</span>    default:<a name="line.627"></a>
+<span class="sourceLineNo">628</span>      throw new SAXException("Invalid alphabet size.");<a name="line.628"></a>
+<span class="sourceLineNo">629</span>    }<a name="line.629"></a>
+<span class="sourceLineNo">630</span>  }<a name="line.630"></a>
+<span class="sourceLineNo">631</span><a name="line.631"></a>
+<span class="sourceLineNo">632</span>}<a name="line.632"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
