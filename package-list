@@ -1,0 +1,9 @@
+net.seninp.jmotif.distance
+net.seninp.jmotif.sax
+net.seninp.jmotif.sax.alphabet
+net.seninp.jmotif.sax.datastructures
+net.seninp.jmotif.sax.discord
+net.seninp.jmotif.sax.parallel
+net.seninp.jmotif.sax.registry
+net.seninp.jmotif.sax.trie
+net.seninp.util
